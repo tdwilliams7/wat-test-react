@@ -3,6 +3,21 @@ import React, { Component } from "react";
 import "./App.css";
 
 class App extends Component {
+  state = {
+    people: []
+  };
+
+  componentDidMount() {
+    fetch("https://willowtreeapps.com/api/v1.0/profiles/")
+      .then(response => response.json())
+      .then(people => {
+        this.setState({ people }, () => {
+          console.log(this.state.people);
+        });
+      })
+      .catch(err => console.log(err));
+  }
+
   render() {
     return (
       <div className="App">
