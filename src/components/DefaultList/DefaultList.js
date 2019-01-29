@@ -12,10 +12,7 @@ const DefaultList = props => {
         onClick={() => props.guessCorrect(props.person.id)}
       />
       {props.person.firstName}
-      <div
-        className={props.className}
-        style={{ width: "100%", height: "250px" }}
-      >
+      <div className={props.className}>
         <div>{props.person.firstName}</div>
         <div>{props.person.lastName}</div>
       </div>
