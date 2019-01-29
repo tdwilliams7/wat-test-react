@@ -1,11 +1,12 @@
 import React from "react";
 import { Row } from "reactstrap";
+import Logo from "../../WTlogo.png";
 import "./DefaultList.css";
 const DefaultList = props => {
   return (
     <Row>
       <img
-        src={props.person.headshot.url}
+        src={props.person.headshot.url || Logo}
         alt={props.person.firstName}
         style={{ width: "100%", height: "250px" }}
         onClick={() => props.guessCorrect(props.person.id)}

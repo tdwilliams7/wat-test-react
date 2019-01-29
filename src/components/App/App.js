@@ -12,7 +12,9 @@ class App extends Component {
     correctIndex: null,
     correctPerson: {},
     guesses: [],
-    correct: false
+    correct: false,
+    right: 0,
+    wrong: 0
   };
 
   componentDidMount() {
@@ -40,9 +42,7 @@ class App extends Component {
     const startingIndex = Math.floor(
       Math.random() * (this.state.people.length - 5)
     );
-    for (let i = startingIndex; i < startingIndex + 5; i++) {
-      selected.push(this.state.people[i]);
-    }
+    selected = this.state.people.slice(startingIndex, startingIndex + 5);
     this.setState({
       selected,
       correctIndex,
@@ -53,13 +53,14 @@ class App extends Component {
 
   guessCorrect = id => {
     let guesses = this.state.guesses.slice();
+    let right = this.state.right;
+    let wrong = this.state.wrong;
+    console.log(right++);
     guesses.push(id);
-    // console.log(guesses);
-    // console.log(id === this.state.correctPerson.id);
     if (id === this.state.correctPerson.id) {
-      this.setState({ guesses, correct: true });
+      this.setState({ guesses, correct: true, right: right++ });
     } else {
-      this.setState({ guesses });
+      this.setState({ guesses, wrong: wrong++ });
     }
   };
 
@@ -72,23 +73,24 @@ class App extends Component {
     ) {
       return "wrong";
     } else {
-      return "hidden";
+      return "";
     }
   };
 
   render() {
-    console.log(this.state.selected);
-    console.log(this.state.correctPerson);
+    console.log(this.state.wrong);
     return (
       <div className="App">
         <Container>
           {
             <div>
-              Who is {this.state.correctPerson.firstName}
+              Who is {this.state.correctPerson.firstName}{" "}
               {this.state.correctPerson.lastName}?
             </div>
           }
-          {this.state.correct ? <div>Correct!</div> : null}
+          <div>
+            Right: {this.state.right} Wrong: {this.state.wrong}
+          </div>
           <Row>
             {this.state.loading
               ? null
