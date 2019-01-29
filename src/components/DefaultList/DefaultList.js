@@ -1,5 +1,6 @@
 import React from "react";
 import { Row } from "reactstrap";
+import "./DefaultList.css";
 const DefaultList = props => {
   return (
     <Row>
@@ -7,9 +8,16 @@ const DefaultList = props => {
         src={props.person.headshot.url}
         alt={props.person.firstName}
         style={{ width: "100%", height: "250px" }}
-        onClick={() => props.guessWinner(props.person.id)}
+        onClick={() => props.guessCorrect(props.person.id)}
       />
       {props.person.firstName}
+      <div
+        className={props.className}
+        style={{ width: "100%", height: "250px" }}
+      >
+        <div>{props.person.firstName}</div>
+        <div>{props.person.lastName}</div>
+      </div>
     </Row>
   );
 };

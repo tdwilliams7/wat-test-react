@@ -10,7 +10,9 @@ class App extends Component {
     selected: [],
     loading: true,
     correctIndex: null,
-    correctPerson: {}
+    correctPerson: {},
+    guesses: [],
+    correct: false
   };
 
   componentDidMount() {
@@ -49,12 +51,29 @@ class App extends Component {
     });
   };
 
-  guessWinner = id => {
-    console.log(id === this.state.correctPerson.id);
-    // if (id === this.state.correctPerson.id) {
-    //   co;
-    //   // this.setState({ correct: true });
-    // }
+  guessCorrect = id => {
+    let guesses = this.state.guesses.slice();
+    guesses.push(id);
+    // console.log(guesses);
+    // console.log(id === this.state.correctPerson.id);
+    if (id === this.state.correctPerson.id) {
+      this.setState({ guesses, correct: true });
+    } else {
+      this.setState({ guesses });
+    }
+  };
+
+  setClassName = id => {
+    if (this.state.guesses.includes(id) && id === this.state.correctPerson.id) {
+      return "correct";
+    } else if (
+      this.state.guesses.includes(id) &&
+      id !== this.state.correctPerson.id
+    ) {
+      return "wrong";
+    } else {
+      return "hidden";
+    }
   };
 
   render() {
@@ -69,6 +88,7 @@ class App extends Component {
               {this.state.correctPerson.lastName}?
             </div>
           }
+          {this.state.correct ? <div>Correct!</div> : null}
           <Row>
             {this.state.loading
               ? null
@@ -77,7 +97,10 @@ class App extends Component {
                     <Col key={person.id} style={{ margin: "10px" }}>
                       <DefaultList
                         person={person}
-                        guessWinner={this.guessWinner}
+                        guessCorrect={this.guessCorrect}
+                        guesses={this.state.guesses}
+                        correctPerson={this.state.correctPerson}
+                        className={this.setClassName(person.id)}
                       />
                     </Col>
                   );
