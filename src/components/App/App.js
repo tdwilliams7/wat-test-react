@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import DefaultList from "../DefaultList/DefaultList";
+import { Row, Container, Col } from "reactstrap";
 
 import "./App.css";
 
@@ -7,51 +8,82 @@ class App extends Component {
   state = {
     people: [],
     selected: [],
-    loading: true
+    loading: true,
+    correctIndex: null,
+    correctPerson: {}
   };
 
   componentDidMount() {
+    this.fetchPeople();
+  }
+
+  fetchPeople = () => {
     fetch("https://willowtreeapps.com/api/v1.0/profiles/")
       .then(response => response.json())
       .then(people => {
         this.setState({ people }, () => {
-          this.getFive();
+          if (this.state.people.length) {
+            this.getSelected();
+          } else {
+            this.fetchPeople();
+          }
         });
       })
       .catch(err => console.log(err));
-  }
+  };
 
-  getFive = () => {
+  getSelected = () => {
     let selected = [];
-    const startingIndex =
-      Math.floor(Math.random() * this.state.people.length) - 5;
+    const correctIndex = Math.floor(Math.random() * 4);
+    const startingIndex = Math.floor(
+      Math.random() * (this.state.people.length - 5)
+    );
     for (let i = startingIndex; i < startingIndex + 5; i++) {
       selected.push(this.state.people[i]);
     }
-    this.setState({ selected, loading: false });
+    this.setState({
+      selected,
+      correctIndex,
+      correctPerson: selected[correctIndex],
+      loading: false
+    });
+  };
+
+  guessWinner = id => {
+    console.log(id === this.state.correctPerson.id);
+    // if (id === this.state.correctPerson.id) {
+    //   co;
+    //   // this.setState({ correct: true });
+    // }
   };
 
   render() {
+    console.log(this.state.selected);
+    console.log(this.state.correctPerson);
     return (
       <div className="App">
-        <header className="App-header">
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-        {this.state.loading
-          ? null
-          : this.state.selected.map(person => {
-              return <DefaultList key={person.id} person={person} />;
-            })}
+        <Container>
+          {
+            <div>
+              Who is {this.state.correctPerson.firstName}
+              {this.state.correctPerson.lastName}?
+            </div>
+          }
+          <Row>
+            {this.state.loading
+              ? null
+              : this.state.selected.map(person => {
+                  return (
+                    <Col key={person.id} style={{ margin: "10px" }}>
+                      <DefaultList
+                        person={person}
+                        guessWinner={this.guessWinner}
+                      />
+                    </Col>
+                  );
+                })}
+          </Row>
+        </Container>
       </div>
     );
   }
