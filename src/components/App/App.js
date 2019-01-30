@@ -14,7 +14,8 @@ class App extends Component {
     guesses: [],
     correct: false,
     right: 0,
-    wrong: 0
+    wrong: 0,
+    face: true
   };
 
   componentDidMount() {
@@ -36,6 +37,7 @@ class App extends Component {
       .catch(err => console.log(err));
   };
 
+  // takes in an array of people ie state.people or mats and grabs 5 and sets to selected
   getSelected = peopleArr => {
     this.setState({
       selected: [],
@@ -45,10 +47,9 @@ class App extends Component {
       guesses: [],
       correct: false
     });
-    let selected = [];
     const correctIndex = Math.floor(Math.random() * 4);
     const startingIndex = Math.floor(Math.random() * (peopleArr.length - 5));
-    selected = peopleArr.slice(startingIndex, startingIndex + 5);
+    const selected = peopleArr.slice(startingIndex, startingIndex + 5);
     this.setState({
       selected,
       correctIndex,
@@ -56,10 +57,14 @@ class App extends Component {
       loading: false
     });
   };
+
   playNormal = () => {
+    // normal mode with all employees
     this.getSelected(this.state.people);
   };
+
   getMats = () => {
+    // just the mats
     const mats = this.state.people.filter(person => {
       return person.firstName.toLowerCase().includes("mat");
     });
@@ -80,17 +85,34 @@ class App extends Component {
     }
   };
 
+  toggleFaceGame = () => {
+    this.setState({
+      face: !this.state.face
+    });
+  };
+
   setClassName = id => {
-    let className = "pic ";
+    // after you click, it will change the color
     if (this.state.guesses.includes(id) && id === this.state.correctPerson.id) {
-      className += "correct";
+      return "pic correct";
     } else if (
       this.state.guesses.includes(id) &&
       id !== this.state.correctPerson.id
     ) {
-      className += "wrong";
+      return "pic wrong";
     }
-    return className;
+    return "hidden";
+  };
+
+  picClassName = id => {
+    if (this.state.guesses.includes(id) && id === this.state.correctPerson.id) {
+      return "pic correct";
+    } else if (
+      this.state.guesses.includes(id) &&
+      id !== this.state.correctPerson.id
+    ) {
+      return "pic wrong";
+    }
   };
 
   render() {
@@ -102,14 +124,26 @@ class App extends Component {
           <Container>
             <button onClick={this.playNormal}>Play</button>
             <button onClick={this.getMats}>Mat(s)</button>
-            <div>
-              Who is {this.state.correctPerson.firstName}{" "}
-              {this.state.correctPerson.lastName}?
-            </div>
-
+            <button onClick={this.toggleFaceGame}>Name or Face</button>
             <div>
               Right: {this.state.right} Wrong: {this.state.wrong}
             </div>
+            {this.state.face === true ? (
+              <div>
+                Who is {this.state.correctPerson.firstName}{" "}
+                {this.state.correctPerson.lastName}?
+              </div>
+            ) : (
+              <div>
+                <img
+                  src={
+                    this.state.selected[this.state.correctIndex].headshot.url
+                  }
+                  style={{ height: "250px" }}
+                />
+              </div>
+            )}
+
             <Row>
               {this.state.loading
                 ? null
@@ -122,6 +156,8 @@ class App extends Component {
                           guesses={this.state.guesses}
                           correctPerson={this.state.correctPerson}
                           className={this.setClassName(person.id)}
+                          picClassName={this.picClassName(person.id)}
+                          face={this.state.face}
                         />
                       </Col>
                     );
