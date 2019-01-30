@@ -71,6 +71,14 @@ class App extends Component {
     this.getSelected(mats);
   };
 
+  getCurrentTeam = () => {
+    // anyone with a jobTitle
+    const currentTeam = this.state.people.filter(person => {
+      return person.jobTitle;
+    });
+    this.getSelected(currentTeam);
+  };
+
   guessCorrect = id => {
     let guesses = this.state.guesses.slice();
     guesses.push(id);
@@ -124,7 +132,9 @@ class App extends Component {
           <Container>
             <button onClick={this.playNormal}>Play</button>
             <button onClick={this.getMats}>Mat(s)</button>
+            <button onClick={this.getCurrentTeam}>Current Team</button>
             <button onClick={this.toggleFaceGame}>Name or Face</button>
+
             <div>
               Right: {this.state.right} Wrong: {this.state.wrong}
             </div>
